@@ -14,16 +14,13 @@ var prerender = module.exports = function(req, res, next) {
         });
         return res.end(cachedRender);
       } else if (typeof cachedRender == 'object') {
-        res.writeHead(cachedRender.status || 200, {
-          "Content-Type": "text/html"
-        });
+        res.writeHead(cachedRender.status || 200,  cachedRender.headers || { "Content-Type": "text/html"});
         return res.end(cachedRender.body || '');
       }
     }
 
     prerender.getPrerenderedPageResponse(req, function(err, prerenderedResponse){
       prerender.afterRenderFn(err, req, prerenderedResponse);
-
       if(prerenderedResponse){
         res.writeHead(prerenderedResponse.statusCode, prerenderedResponse.headers);
         return res.end(prerenderedResponse.body);
